@@ -16,6 +16,7 @@ export const useMercureTopic = () => {
 
     const createListener = () => {
         eventSource.value.addEventListener('message', (event) => {
+            console.log(event)
             conversation.value.push(event.data)
         })
     }
@@ -23,7 +24,7 @@ export const useMercureTopic = () => {
     const publishMessage = async () => {
         const params = new URLSearchParams();
         params.append("topic", topicUrl.value);
-        params.append("data", JSON.stringify(stringToPublish.value))
+        params.append("data", stringToPublish.value)
         await mercureAxiosInstance.post('', params)
         stringToPublish.value = ''
     }
