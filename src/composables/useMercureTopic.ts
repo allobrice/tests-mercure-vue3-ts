@@ -1,5 +1,5 @@
 import {Topics} from "@/enums/topics.ts";
-import {computed, ref} from "vue";
+import {computed, type ComputedRef, ref, watch} from "vue";
 import {mercureAxiosInstance} from "@/xhr/mercure.ts";
 
 export const useMercureTopic = () => {
@@ -7,21 +7,30 @@ export const useMercureTopic = () => {
     const stringToPublish = ref<string>('');
     const conversation = ref<string[]>([])
 
-    const eventSource = computed(() => {
+    const eventSource: ComputedRef<EventSource> = computed(() => {
         const url = new URL(import.meta.env.VITE_MERCURE_URL);
-        url.searchParams.append('topic', topicUrl.value);
+        const urlTopic = topicUrl.value
+        console.log(urlTopic)
+        url.searchParams.append('topic', urlTopic);
         url.searchParams.append('authorization', import.meta.env.VITE_SUBSCRIBE_TOKEN);
         return new EventSource(url);
     });
+    watch(eventSource, (__, oldVal) => {
+        oldVal?.close()
+    })
 
-    const createListener = () => {
+    const createListener = ():void => {
         eventSource.value.addEventListener('message', (event) => {
             console.log(event)
             conversation.value.push(event.data)
         })
     }
 
-    const publishMessage = async () => {
+    watch(topicUrl, () => {
+        createListener()
+    })
+
+    const publishMessage = async ():Promise<void> => {
         const params = new URLSearchParams();
         params.append("topic", topicUrl.value);
         params.append("data", stringToPublish.value)
@@ -29,5 +38,5 @@ export const useMercureTopic = () => {
         stringToPublish.value = ''
     }
 
-    return {createListener, publishMessage,conversation, stringToPublish}
+    return {createListener, publishMessage,conversation, stringToPublish, topicUrl}
 }

@@ -1,8 +1,9 @@
 <script lang="ts" setup>
 import {useMercureTopic} from "@/composables/useMercureTopic.ts";
 import {onMounted} from "vue";
+import {Topics} from "@/enums/topics.ts";
 
-const {createListener, publishMessage,conversation, stringToPublish} = useMercureTopic();
+const {createListener, publishMessage,conversation, stringToPublish, topicUrl} = useMercureTopic();
 onMounted(() => {
   createListener();
 });
@@ -12,6 +13,12 @@ defineProps<{name: string}>()
 <template>
   <div class="user">
     <h2>{{name}}</h2>
+    <div class="topic">
+      <select v-model="topicUrl">
+        <option :value="Topics.topicUrl">Topic 1</option>
+        <option :value="Topics.topicUrl2">Topic 2</option>
+      </select>
+    </div>
     <div class="conversation">
       <p class="message" v-for="message in conversation" :key="message">{{ message }}</p>
     </div>
