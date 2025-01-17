@@ -15,10 +15,6 @@ export const useMercureTopic = () => {
         url.searchParams.append('authorization', import.meta.env.VITE_SUBSCRIBE_TOKEN);
         return new EventSource(url);
     });
-    watch(eventSource, (__, oldVal) => {
-        oldVal?.close()
-        createListener()
-    })
 
     const createListener = ():void => {
         eventSource.value.addEventListener('message', (event) => {
@@ -26,6 +22,11 @@ export const useMercureTopic = () => {
             conversation.value.push(event.data)
         })
     }
+
+    watch(eventSource, (__, oldVal) => {
+        oldVal?.close()
+        createListener()
+    })
 
     const publishMessage = async ():Promise<void> => {
         const params = new URLSearchParams();
