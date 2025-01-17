@@ -17,6 +17,7 @@ export const useMercureTopic = () => {
     });
     watch(eventSource, (__, oldVal) => {
         oldVal?.close()
+        createListener()
     })
 
     const createListener = ():void => {
@@ -25,10 +26,6 @@ export const useMercureTopic = () => {
             conversation.value.push(event.data)
         })
     }
-
-    watch(topicUrl, () => {
-        createListener()
-    })
 
     const publishMessage = async ():Promise<void> => {
         const params = new URLSearchParams();
