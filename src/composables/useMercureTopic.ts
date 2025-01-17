@@ -10,7 +10,6 @@ export const useMercureTopic = () => {
     const eventSource: ComputedRef<EventSource> = computed(() => {
         const url = new URL(import.meta.env.VITE_MERCURE_URL);
         const urlTopic = topicUrl.value
-        console.log(urlTopic)
         url.searchParams.append('topic', urlTopic);
         url.searchParams.append('authorization', import.meta.env.VITE_SUBSCRIBE_TOKEN);
         return new EventSource(url);
